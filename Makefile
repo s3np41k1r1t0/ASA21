@@ -2,21 +2,21 @@ cc     = g++
 dflags = -O3 -Wall -std=c++11 -g -lm
 flags  = -O3 -Wall -std=c++11 -lm
 
-params = 3 1
+params = 4 1
 
-randomDAG: randomDAG.cpp
-	$(cc) $(flags) -o randomDAG randomDAG.cpp
-	./randomDAG $(params) > problem
+randomDAG: src/randomDAG.cpp
+	$(cc) $(flags) -o bin/randomDAG src/randomDAG.cpp
+	./bin/randomDAG $(params) > bin/problem
 
-build: randomDAG file.cpp
-	cat problem
-	$(cc) $(flags) file.cpp
+build: randomDAG src/file.cpp
+	cat bin/problem
+	$(cc) $(flags) -o bin/file src/file.cpp
 
 run: build
-	./a.out < problem
+	./bin/file < bin/problem
 
-debug: file.cpp
-	$(cc) $(debug_flags) -o debug file.cpp
+debug: src/file.cpp
+	$(cc) $(debug_flags) -o bin/debug src/file.cpp
 
 clean:
-	rm -f problem a.out debug
+	rm -f bin/*

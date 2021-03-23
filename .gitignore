@@ -3,7 +3,4 @@
 *.log
 tmp/
 
-randomDAG
-problem
-a.out
-debug
+bin/

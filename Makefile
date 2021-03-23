@@ -19,4 +19,4 @@ debug: file.cpp
 	$(cc) $(debug_flags) -o debug file.cpp
 
 clean:
-	rm problem a.out debug
+	rm -f problem a.out debug

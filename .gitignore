@@ -3,4 +3,5 @@
 *.log
 tmp/
 
-bin/
+bin
+bin/*

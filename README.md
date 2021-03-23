@@ -15,3 +15,7 @@ O ficheiro de entrada contém a informação sobre as sequências de dominós, e
 Quaisquer inteiros numa linha estão separados por no máximo um espaço em branco, não contendo qualquer outro caractér, a não ser o fim de linha.
 
 Assuma que os grafos de input são um DAG (grafo dirigido acíclico).
+
+### Solution
+
+Since we are given a DAG, I can sort it topologically. 

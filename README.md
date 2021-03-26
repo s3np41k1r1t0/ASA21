@@ -19,3 +19,5 @@ Assuma que os grafos de input são um DAG (grafo dirigido acíclico).
 ### Solution
 
 Since we are given a DAG, I can sort it topologically. 
+All the dominoes Joao Caracol had to drop by hand are the sources of the DAG.
+If we DFS in each one of the sources we get the greatest sequence of fallen dominoes

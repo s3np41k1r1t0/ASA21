@@ -10,6 +10,7 @@ typedef int Vertex;
 class Graph{
 		private:
 				Vertex *incoming;
+				Vertex *distances;
 				list<Vertex> *adj;
 				list<Vertex> sources;
 				queue<Vertex> topological;
@@ -29,6 +30,7 @@ class Graph{
 Graph::Graph(int n){
 		size = n;
 		adj = new list<Vertex>[n];
+		distances = new Vertex[n];
 		incoming = new Vertex[n];
 		memset(incoming,0,size*sizeof(Vertex));
 }
@@ -58,6 +60,8 @@ void Graph::build_sources(){
 void Graph::kahn(){
 		queue<int> q;
 
+		build_sources();
+
 		for(Vertex s: sources)
 				q.push(s);
 
@@ -74,7 +78,7 @@ void Graph::kahn(){
 }
 
 int Graph::lssp(){
-		Vertex distances[size] = {0};
+		memset(distances,0,size*sizeof(Vertex));
 
 		//TODO i think this could be optimized
 		//i dont think it really needs topological sort to work
@@ -96,7 +100,6 @@ int Graph::lssp(){
 }
 
 void Graph::solve(){
-		build_sources();
 		//debug();
 		kahn();
 		int longest = lssp();

@@ -5,3 +5,5 @@ tmp/
 
 bin
 bin/*
+src/macarrao.cpp
+src/lol.cpp

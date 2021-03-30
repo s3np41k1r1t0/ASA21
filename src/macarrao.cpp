@@ -1,66 +1,59 @@
 #include <iostream>
-#include <string.h>
 #include <list>
+#include <queue>
 
 using namespace std;
 
-void debug(list<int> *graph, int n){
-		for(int i=0; i<n; i++){
-				cout << i << ": ";
-				for(auto x = graph[i].begin(); x!=graph[i].end(); x++)
-						cout << *x << " ";
-				cout << endl;
-		}
-}
+int n,x,y, *incoming, *dist;
+list<int> *graph, sources;
+queue<int> topological, q;
 
 int main(){
-    int n,m,x,y;
-
-		// n = #V, m = #E
-    cin >> n >> m;
+    cin >> n >> x;
 
 		// Space: O(V+E)
-		// Time:  O(V^2+VE)
-		list<int> graph[n];
-		int incoming[n] = {0};
-		list<int> sources, queue;
-		int visited, max_seq = 0;
-
+		// Time:  O(V+E)
+		incoming = new int[n];
+		graph = new list<int>[n];
+		
     while(cin >> x >> y){
 				graph[x-1].push_front(y-1);
 				incoming[y-1]++;
 		}
 
-		debug(graph,n);
-
 		for(int i=0; i<n; i++)
 				if(incoming[i] == 0)
 						sources.push_front(i);
 		
-		for(int s: sources){
-				//should i choose time complexity or space complexity???
-				bool temp[n] = {0};
-				//memset(temp,0,sizof(int)*n);
-				queue.push_front(s);
-				visited = 0;
-				
-				while(!queue.empty()){
-						s = queue.front();
-						queue.pop_front();	
-						for(int adj: graph[s]){
-								if(!temp[adj]){
-										temp[adj] = 1;
-										queue.push_front(adj);
-										visited++;
-								}
-						}
-				}
+		for(int s: sources)
+				q.push(s);
 
-				visited++;
-				if(visited > max_seq) max_seq = visited;
+		//Kahn’s algorithm for Topological Sorting
+		while(!q.empty()){
+				x = q.front();
+				q.pop();
+				topological.push(x);
+
+				for(int adj: graph[x])
+						if(--incoming[adj] == 0)
+								q.push(adj);
+		}
+		
+		dist = new int[n];
+		y = 0;
+
+		//sssp on a dag - modified
+		while(!topological.empty()){
+				x = topological.front();
+				topological.pop();
+							
+				for(int adj: graph[x])
+						dist[adj] = max(dist[adj],dist[x]+1);
+				
+				y = max(dist[x],y);
 		}
 
-		cout << sources.size() << " " << max_seq << endl;
-
+		cout << sources.size() << " " << y+1 << endl;
+		
 		return 0;
 }

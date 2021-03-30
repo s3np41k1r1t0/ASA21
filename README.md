@@ -20,4 +20,4 @@ Assuma que os grafos de input são um DAG (grafo dirigido acíclico).
 
 Since we are given a DAG, I can sort it topologically. 
 All the dominoes Joao Caracol had to drop by hand are the sources of the DAG.
-If we DFS in each one of the sources we get the greatest sequence of fallen dominoes
+Using kahn algorithm we get a topological sort of the DAG and then we can use a modified SSSP to find the longest line streak of falling dominoes.

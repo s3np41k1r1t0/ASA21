@@ -1,114 +1,120 @@
 #include <iostream>
-#include <vector>
 #include <list>
-#include <map>
+#include <queue>
+#include <cstring>
 
 using namespace std;
 
-//void Dominos::debug(){
-//    cout << "GRAPH: " << endl;
-//
-//    for(unsigned int i=0; i < size; i++){
-//        cout << i+1 << ": ";
-//        for(auto x = graph[i].begin(); x != graph[i].end(); x++)
-//            cout << (*x)+1 << " ";
-//        cout << "\n";
-//    }
-//
-//    cout << "STACK: ";
-//
-//    for(auto i = stack.begin(); i != stack.end(); i++)
-//        cout << (*i)+1 << " ";
-//
-//    cout << endl;
-//}
+typedef int Vertex;
 
-//void Dominos::build_topological_order(){
-//    stack.clear();
-//    clear_visited();
-//    build = true;
-//
-//    for(unsigned int v = 0; v < size; v++)
-//        if(graph[v].visited == false)
-//            DFS_visit(graph[v]);
-//}
+class Graph{
+		private:
+				Vertex *incoming;
+				list<Vertex> *adj;
+				list<Vertex> sources;
+				queue<Vertex> topological;
+				int size;
 
-class Dominos {
-    public:
-        vector<vector<int>> graph;
-        list<int> stack;
-				map<int,bool> colors;
+				void build_sources();
+				void kahn();
+				int lssp();
 
-        int visited;
-        int minimo_pecas, max_seq;
-        bool build;
-
-        Dominos(unsigned int n): graph(n){}
-
-        void insert_graph(int i, int v);
-        //void debug();
-        void DFS_visit(int v);
-        void solve();
-        void print_answers();
+		public:
+				Graph(int n);
+				void insert(int x, int y);
+				void solve();
+				void debug();
 };
 
-void Dominos::insert_graph(int i, int v){
-    graph[i-1].push_back(v-1);
+Graph::Graph(int n){
+		size = n;
+		adj = new list<Vertex>[n];
+		incoming = new Vertex[n];
+		memset(incoming,0,size*sizeof(Vertex));
 }
 
-void Dominos::DFS_visit(int v){
-		colors[v] = true;
-    
-    for(auto adj = graph[v].begin(); adj != graph[v].end(); adj++){
-        if(colors[*adj] == false){
-            DFS_visit(graph[v][*adj]);
-        }
-    }
-
-    visited++;
-}
-
-void Dominos::solve(){
-		map<int,int> incoming;
-		for(int x = 0; x < (int) graph.size(); x++)
-				for(auto y = graph[x].begin(); y != graph[x].end(); y++)
-						incoming[x]++;
-
-		vector<int> sources;
-		for(int x = 0; x < (int)graph.size(); x++)
-				if(incoming[x] == 0)
-						sources.push_back(x);
-
-		minimo_pecas = sources.size();
-
-		for(int i = 0; i < (int)sources.size(); i++){
-				colors.clear();
-				visited = 0;
-				DFS_visit(sources[i]);
-				if(visited > max_seq) max_seq = visited;
+void Graph::debug(){
+		cout << "GRAPH:" << endl;
+		for(int i=0; i<size; i++){
+				cout << i+1 << ": ";
+				for(auto x: adj[i])
+						cout << x+1 << " ";
+				cout << endl;
+				cout << "INCOMING EDGES: " << incoming[i] << endl;
 		}
 }
 
-void Dominos::print_answers(){
-    cout << minimo_pecas << " " << max_seq << endl;
+void Graph::insert(int x, int y){
+		adj[x-1].push_front(y-1);
+		incoming[y-1]++;
 }
 
+void Graph::build_sources(){
+		for(int i=0; i<size; i++)
+				if(incoming[i] == 0)
+						sources.push_front(i);
+}
+
+void Graph::kahn(){
+		queue<int> q;
+
+		for(Vertex s: sources)
+				q.push(s);
+
+		Vertex v;
+		while(!q.empty()){
+				v = q.front();
+				q.pop();
+				topological.push(v);
+
+				for(int adj: adj[v])
+						if(--incoming[adj] == 0)
+								q.push(adj);
+		}
+}
+
+int Graph::lssp(){
+		Vertex distances[size] = {0};
+
+		//TODO i think this could be optimized
+		//i dont think it really needs topological sort to work
+		//since we have the sources we can bfs and discover the longest
+		//path using the same algorithm
+		Vertex v;
+		int res = 0;
+		while(!topological.empty()){
+				v = topological.front();
+				topological.pop();
+
+				for(Vertex adj: adj[v])
+						distances[adj] = max(distances[adj],distances[v]+1);
+
+				res = max(distances[v],res);
+		}
+
+		return res+1;
+}
+
+void Graph::solve(){
+		build_sources();
+		//debug();
+		kahn();
+		int longest = lssp();
+		cout << sources.size() << " " << longest << endl;
+}
 
 int main(){
-    int n,m,x,y;
+		int x,y;
 
-    cin >> n >> m;
+		cin >> x >> y;
 
-    Dominos dominos(n);
+		Graph g(x);
 
-    //build dominos
-    while(cin >> x >> y)
-        dominos.insert_graph(x,y);
+		while(cin >> x >> y)
+				g.insert(x,y);
+		
 
-    //dominos.build_topological_order();
-    //dominos.debug();
-    dominos.solve();
-    dominos.print_answers();
+		g.solve();
 
-    return 0;
+		return 0;
 }

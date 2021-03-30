@@ -10,7 +10,8 @@ randomDAG: src/randomDAG.cpp
 
 
 build: randomDAG src/macarrao.cpp
-	$(cc) $(flags) -o bin/file src/macarrao.cpp
+	#$(cc) $(flags) -o bin/file src/macarrao.cpp
+	$(cc) $(flags) -o bin/file src/file.cpp
 
 run: build
 	bash -c "time ./bin/file < bin/problem"

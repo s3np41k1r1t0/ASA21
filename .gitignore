@@ -7,3 +7,5 @@ bin
 bin/*
 src/macarrao.cpp
 src/lol.cpp
+
+*.out

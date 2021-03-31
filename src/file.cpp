@@ -1,123 +1,119 @@
 #include <iostream>
-#include <list>
+#include <forward_list>
 #include <queue>
 #include <cstring>
 
 using namespace std;
 
-typedef int Vertex;
-
-class Graph{
-		private:
-				Vertex *incoming;
-				Vertex *distances;
-				list<Vertex> *adj;
-				list<Vertex> sources;
-				queue<Vertex> topological;
-				int size;
-
-				void build_sources();
-				void kahn();
-				int lssp();
-
-		public:
-				Graph(int n);
-				void insert(int x, int y);
-				void solve();
-				void debug();
+class Vertex{
+	public:
+		forward_list<Vertex*> adj;
+		unsigned int distance = 0;
+		unsigned int incoming = 0;
+		void create_edge(Vertex *e);
 };
 
-Graph::Graph(int n){
-		size = n;
-		adj = new list<Vertex>[n];
-		distances = new Vertex[n];
-		incoming = new Vertex[n];
-		memset(incoming,0,size*sizeof(Vertex));
+void Vertex::create_edge(Vertex *e){
+	adj.push_front(e);
 }
 
-void Graph::debug(){
-		cout << "GRAPH:" << endl;
-		for(int i=0; i<size; i++){
-				cout << i+1 << ": ";
-				for(auto x: adj[i])
-						cout << x+1 << " ";
-				cout << endl;
-				cout << "INCOMING EDGES: " << incoming[i] << endl;
-		}
+class Graph{
+	private:
+		Vertex *graph;
+		queue<Vertex*> topological;
+		queue<Vertex*> q;
+		unsigned int size;
+
+		unsigned int kahn();
+		unsigned int lssp();
+
+	public:
+		Graph(unsigned int n);
+		void insert(unsigned int x, unsigned int y);
+		void solve();
+};
+			
+Graph::Graph(unsigned int n){
+	size = n;
+	graph = new Vertex[n];
 }
 
-void Graph::insert(int x, int y){
-		adj[x-1].push_front(y-1);
-		incoming[y-1]++;
+void Graph::insert(unsigned int x, unsigned int y){
+	graph[x-1].create_edge(&graph[y-1]);
+	graph[y-1].incoming++;
 }
 
-void Graph::build_sources(){
-		for(int i=0; i<size; i++)
-				if(incoming[i] == 0)
-						sources.push_front(i);
+unsigned int Graph::kahn(){
+	Vertex *v;
+	unsigned int res;
+	forward_list<Vertex*>::iterator idx;
+
+	for(unsigned int i=0; i<size; i++)
+		if(graph[i].incoming == 0)
+			q.push(&graph[i]);
+
+	res = q.size();
+
+	while(!q.empty()){
+		v = q.front();
+		q.pop();
+		topological.push(v);
+
+		for(idx = v->adj.begin(); idx != v->adj.end(); idx++)
+			if(--(*idx)->incoming == 0)
+				q.push(*idx);
+	}
+
+	return res;
 }
 
-void Graph::kahn(){
-		queue<int> q;
+unsigned int Graph::lssp(){
+	//TODO i think this could be optimized
+	//i dont think it really needs topological sort to work
+	//since we have the sources we can bfs and discover the longest
+	//path using the same algorithm
+	Vertex *v;
+	unsigned int res = 0;
+	forward_list<Vertex*>::iterator idx;
 
-		build_sources();
+	while(!topological.empty()){
+		v = topological.front();
+		topological.pop();
 
-		for(Vertex s: sources)
-				q.push(s);
+		for(idx = v->adj.begin(); idx != v->adj.end(); idx++)
+			(*idx)->distance = max((*idx)->distance,v->distance+1);
 
-		Vertex v;
-		while(!q.empty()){
-				v = q.front();
-				q.pop();
-				topological.push(v);
+		res = max(v->distance,res);
+	}
 
-				for(int adj: adj[v])
-						if(--incoming[adj] == 0)
-								q.push(adj);
-		}
-}
-
-int Graph::lssp(){
-		memset(distances,0,size*sizeof(Vertex));
-
-		//TODO i think this could be optimized
-		//i dont think it really needs topological sort to work
-		//since we have the sources we can bfs and discover the longest
-		//path using the same algorithm
-		Vertex v;
-		int res = 0;
-		while(!topological.empty()){
-				v = topological.front();
-				topological.pop();
-
-				for(Vertex adj: adj[v])
-						distances[adj] = max(distances[adj],distances[v]+1);
-
-				res = max(distances[v],res);
-		}
-
-		return res+1;
+	return res+1;
 }
 
 void Graph::solve(){
-		//debug();
-		kahn();
-		int longest = lssp();
-		cout << sources.size() << " " << longest << endl;
+	if(size > 0)
+		cout << kahn() << " " << lssp() << endl;
+	else
+		cout << "0 0\n";
 }
 
 int main(){
-		int x,y;
+	long m;
+	int x,y,n;
 
-		cin >> x >> y;
+	cin >> n >> m;
 
-		Graph g(x);
+	if(n <= 0 || m <= 0)
+		return 1;
 
-		while(cin >> x >> y)
-				g.insert(x,y);
-		
+	Graph g(n);
 
-		g.solve();
+	while(cin >> x >> y && --m)
+		if(x > 0 && y > 0 && x <= n && y <= n)
+			g.insert(x,y);
+		else
+			return 1;
 
-		return 0;
+	g.solve();
+
+	return 0;
 }

@@ -1,27 +1,20 @@
-#include <iostream>
-#include <forward_list>
+#include <stdio.h>
+#include <vector>
 #include <queue>
-#include <cstring>
 
 using namespace std;
 
-class Vertex{
-	public:
-		forward_list<Vertex*> adj;
-		unsigned int distance = 0;
-		unsigned int incoming = 0;
-		void create_edge(Vertex *e);
-};
-
-void Vertex::create_edge(Vertex *e){
-	adj.push_front(e);
-}
-
 class Graph{
 	private:
+		class Vertex{
+			public:
+				vector<Vertex*> adj;
+				unsigned int distance = 0;
+				unsigned int incoming = 0;
+		};
 		Vertex *graph;
 		queue<Vertex*> topological;
-		queue<Vertex*> q;
+		queue<Vertex*> queque;
 		unsigned int size;
 
 		unsigned int kahn();
@@ -39,79 +32,72 @@ Graph::Graph(unsigned int n){
 }
 
 void Graph::insert(unsigned int x, unsigned int y){
-	graph[x-1].create_edge(&graph[y-1]);
+	graph[x-1].adj.push_back(&graph[y-1]);
 	graph[y-1].incoming++;
 }
 
 unsigned int Graph::kahn(){
+	// TOOD
 	Vertex *v;
 	unsigned int res;
-	forward_list<Vertex*>::iterator idx;
+	vector<Vertex*>::iterator idx;
 
 	for(unsigned int i=0; i<size; i++)
 		if(graph[i].incoming == 0)
-			q.push(&graph[i]);
+			queque.push(&graph[i]);
 
-	res = q.size();
+	res = queque.size();
 
-	while(!q.empty()){
-		v = q.front();
-		q.pop();
+	while(!queque.empty()){
+		v = queque.front();
+		queque.pop();
 		topological.push(v);
 
 		for(idx = v->adj.begin(); idx != v->adj.end(); idx++)
 			if(--(*idx)->incoming == 0)
-				q.push(*idx);
+				queque.push(*idx);
 	}
 
 	return res;
 }
 
 unsigned int Graph::lssp(){
-	//TODO i think this could be optimized
-	//i dont think it really needs topological sort to work
-	//since we have the sources we can bfs and discover the longest
-	//path using the same algorithm
 	Vertex *v;
 	unsigned int res = 0;
-	forward_list<Vertex*>::iterator idx;
+	vector<Vertex*>::iterator idx;
 
 	while(!topological.empty()){
 		v = topological.front();
 		topological.pop();
 
 		for(idx = v->adj.begin(); idx != v->adj.end(); idx++)
-			(*idx)->distance = max((*idx)->distance,v->distance+1);
-
-		res = max(v->distance,res);
+			if(v->distance+1 > (*idx)->distance)
+				(*idx)->distance = v->distance+1;
+		
+		if(v->distance > res)
+			res = v->distance;
 	}
 
 	return res+1;
 }
 
 void Graph::solve(){
-	if(size > 0)
-		cout << kahn() << " " << lssp() << endl;
-	else
-		cout << "0 0\n";
+	int k = kahn();
+	int l = lssp();
+	printf("%d %d\n",k,l);
 }
 
 int main(){
-	long m;
-	int x,y,n;
+	unsigned long m;
+	unsigned int x,y,n;
 
-	cin >> n >> m;
-
-	if(n <= 0 || m <= 0)
+	if(scanf("%d %lu\n",&n,&m) == -1)
 		return 1;
 
 	Graph g(n);
 
-	while(cin >> x >> y && --m)
-		if(x > 0 && y > 0 && x <= n && y <= n)
-			g.insert(x,y);
-		else
-			return 1;
+	while(scanf("%d %d\n",&x,&y) != -1)
+		g.insert(x,y);
 
 	g.solve();
 

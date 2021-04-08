@@ -1,7 +1,5 @@
 
 # Relatório 1º projecto ASA 2020/2021
-
-Aluno: Bruno Mendes
 ----
 
 ## Descrição do Problema e da Solução

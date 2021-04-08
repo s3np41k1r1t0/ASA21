@@ -1,3 +1,8 @@
+----
+Relatório 1º projecto ASA 2020/2021
+Aluno: Bruno Mendes
+----
+
 # Descrição do Problema e da Solução
 O Professor João Caracol desenvolveu um algoritmo para conseguir determinar qual o número mínimo de dominós que tem de deitar abaixo com a mão e o número de peças pertencente à maior sequência de dominós a cair, de cada vez que ele deita abaixo com a mão um dominó, numa sequência de dominós feita por ele.
 

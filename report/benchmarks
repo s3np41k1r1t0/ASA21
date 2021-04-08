@@ -1,0 +1,50 @@
+for i in {0..10}
+do; echo $i
+head t$i.in -n 1
+time ./bin/file < t$i.in
+done
+0
+2 0
+2 1
+./bin/file < t$i.in  0.00s user 0.00s system 90% cpu 0.001 total
+1
+1000 349560
+1 748
+./bin/file < t$i.in  0.05s user 0.00s system 99% cpu 0.049 total
+2
+2000 1398226
+2 1466
+./bin/file < t$i.in  0.18s user 0.00s system 99% cpu 0.183 total
+3
+3000 3149015
+1 2204
+./bin/file < t$i.in  0.39s user 0.01s system 99% cpu 0.407 total
+4
+4000 5597757
+1 2952
+./bin/file < t$i.in  0.70s user 0.02s system 99% cpu 0.726 total
+5
+5000 8748142
+1 3742
+./bin/file < t$i.in  1.09s user 0.03s system 99% cpu 1.135 total
+6
+6000 12596349
+1 4470
+./bin/file < t$i.in  1.57s user 0.08s system 99% cpu 1.650 total
+7
+7000 17147865
+1 5144
+./bin/file < t$i.in  2.17s user 0.09s system 99% cpu 2.263 total
+8
+8000 22398701
+1 5956
+./bin/file < t$i.in  2.85s user 0.10s system 99% cpu 2.952 total
+9
+9000 28344022
+1 6651
+./bin/file < t$i.in  3.65s user 0.11s system 99% cpu 3.765 total
+10
+10000 34995343
+2 7472
+./bin/file < t$i.in  4.52s user 0.15s system 99% cpu 4.665 total
+

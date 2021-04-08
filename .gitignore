@@ -9,3 +9,5 @@ src/macarrao.cpp
 src/lol.cpp
 
 *.out
+.ccls-cache
+*.in

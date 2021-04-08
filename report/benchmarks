@@ -1,22 +1,11 @@
-2 0
-./bin/file < t$i.in > /dev/null  0.00s user 0.00s system 88% cpu 0.001 total
-200 14109
-./bin/file < t$i.in > /dev/null  0.00s user 0.00s system 95% cpu 0.003 total
-400 55875
-./bin/file < t$i.in > /dev/null  0.01s user 0.00s system 98% cpu 0.008 total
-600 125741
-./bin/file < t$i.in > /dev/null  0.01s user 0.01s system 98% cpu 0.017 total
-800 223530
-./bin/file < t$i.in > /dev/null  0.03s user 0.00s system 99% cpu 0.029 total
-1000 349630
-./bin/file < t$i.in > /dev/null  0.05s user 0.00s system 98% cpu 0.047 total
-1200 503696
-./bin/file < t$i.in > /dev/null  0.06s user 0.01s system 99% cpu 0.066 total
-1400 685633
-./bin/file < t$i.in > /dev/null  0.08s user 0.01s system 99% cpu 0.091 total
-1600 895217
-./bin/file < t$i.in > /dev/null  0.12s user 0.00s system 99% cpu 0.119 total
-1800 1133317
-./bin/file < t$i.in > /dev/null  0.14s user 0.01s system 99% cpu 0.152 total
-2000 1400151
-./bin/file < t$i.in > /dev/null  0.18s user 0.00s system 99% cpu 0.188 total
+2 0 0.001
+200 14109 0.003
+400 55875 0.008
+600 125741 0.017
+800 223530 0.029
+1000 349630 0.047
+1200 503696 0.066
+1400 685633 0.091
+1600 895217 0.119
+1800 1133317 0.152
+2000 1400151 0.188

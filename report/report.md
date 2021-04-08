@@ -25,7 +25,7 @@ Para obter o caminho mais longo de uma source até uma sink percorro a ordem top
 Para apresentar os resultados utilizo uma chamada ao printf que no contexto do problema assume-se que demora tempo constante - O(1).
 
 ## Complexidade global da solução: O(E + V + (V + E) + (V + E) + 1) = O(V+E)
-- Leitura dos dados de entrada - Θ(E)
+- Leitura dos dados de entrada e inicialização das estruturas - Θ(E)
 - Processamento do grafo para encontrar as sources do DAG - Θ(V)
 - Aplicação do algoritmo de Kahn para encontrar uma ordem topológica válida - Θ(V+E)
 - Processamento da ordem topológica para encontrar o maior caminho - O(V+E)

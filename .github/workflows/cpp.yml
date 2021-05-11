@@ -14,6 +14,7 @@ jobs:
       - name: build
         run: mkdir bin && make build
       - name: run
-        run: make sanity_check
+        # run: make sanity_check
+        run: make test
       - name: clean
         run: make clean

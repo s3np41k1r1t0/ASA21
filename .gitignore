@@ -11,3 +11,4 @@ src/lol.cpp
 *.out
 .ccls-cache
 *.in
+.vscode

@@ -37,7 +37,6 @@ void Graph::insert(unsigned int x, unsigned int y){
 }
 
 unsigned int Graph::kahn(){
-	// TOOD
 	Vertex *v;
 	unsigned int res;
 	vector<Vertex*>::iterator idx;

@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-#include <iostream>
-
-using namespace std;
-
-int main(){
-    cout << "I am gRoot" << endl;
-    return 0;
-=======
 #include <stdio.h>
 #include <iostream>
 #include <vector>
@@ -223,5 +214,4 @@ int main(){
 	g.solve();
 
 	return 0;
->>>>>>> 82ed1b6 (wrong attempt)
 }

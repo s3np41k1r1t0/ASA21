@@ -18,9 +18,8 @@ test: build generate
 	bash -c "time ./bin/file < bin/problem"
 
 sanity_check: build
-	./bin/file < .tests/sanity.in
-	#./bin/file < .tests/sanity.in > .tests/test.out
-	#diff .tests/test.out .tests/sanity.out
+	./bin/file < .tests/sanity.in > .tests/test.out
+	diff .tests/test.out .tests/sanity.out
 
 clean:
 	rm -f bin/* .tests/test.out

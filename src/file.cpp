@@ -1,135 +1,95 @@
-#include <stdio.h>
-
 #include <algorithm>
+#include <cstdio>
 #include <iostream>
+#include <map>
 #include <queue>
+#include <utility>
 #include <vector>
+
+#define MAX_INT 2147483647
 
 using namespace std;
 
 class Graph {
  private:
-  class Edge {
-   private:
-    unsigned int *actual;
-    unsigned int *capacity;
-    unsigned int dest;
-
-   public:
-    Edge(unsigned int *cap, unsigned int *actual, unsigned int dest) {
-      this->actual = actual;
-      this->capacity = cap;
-      this->dest = dest;
-    }
-
-    friend class Graph;
-    friend class Vertex;
-  };
-
   class Vertex {
    private:
-    friend class Edge;
-    vector<Edge *> adj;
-    unsigned int flow = 0;
-    unsigned int heigth = 0;
-    unsigned int id, start;
-    int rank;
+    int id;
+    map<int, int> capacity;
+    vector<Vertex *> adj;
+    Vertex *parent = nullptr;
 
     friend class Graph;
   };
 
   Vertex *graph;
-  unsigned int size;
-  unsigned int result = 0;
-  void discharge(Vertex *u);
-  bool bfs();
-  int dfs(Vertex *v, int flow);
+  int size;
+  int result = 0;
+  int bfs();
 
  public:
-  Graph(unsigned int n);
-  void insert(unsigned int &x, unsigned int &y, unsigned int &cap);
-  void insertX(unsigned int &v, unsigned int &cap);
-  void insertY(unsigned int &v, unsigned int &cap);
+  Graph(int n);
+  void insert(int &x, int &y, int cap);
+  void insertX(int &v, int cap);
+  void insertY(int &v, int cap);
   void solve();
 };
 
 // O(V)
-Graph::Graph(unsigned int n) {
+Graph::Graph(int n) {
   size = n;
   graph = new Vertex[n];
 
-  for (unsigned int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++) {
     graph[i].id = i;
   }
 }
 
-// O(1)
-void Graph::insert(unsigned int &x, unsigned int &y, unsigned int &cap) {
-  unsigned int cap_copy = static_cast<unsigned int>(cap);
-  unsigned int actual = static_cast<unsigned int>(0);
-  graph[x + 1].adj.push_back(new Edge(&cap_copy, &actual, y + 1));
-  graph[y + 1].adj.push_back(new Edge(&cap_copy, &actual, x + 1));
+void Graph::insert(int &x, int &y, int cap) {
+  graph[x + 1].adj.push_back(&graph[y + 1]);
+  graph[y + 1].adj.push_back(&graph[x + 1]);
+  graph[x + 1].capacity[y + 1] = cap;
+  graph[y + 1].capacity[x + 1] = cap;
 }
 
-// O(1)
-void Graph::insertX(unsigned int &v, unsigned int &cap) {
-  unsigned int cap_copy = static_cast<unsigned int>(cap);
-  unsigned int actual = static_cast<unsigned int>(0);
-  graph[0].adj.push_back(new Edge(&cap_copy, &actual, v + 1));
+void Graph::insertX(int &v, int cap) {
+  graph[0].adj.push_back(&graph[v + 1]);
+  graph[0].capacity[v + 1] = cap;
+  graph[v + 1].capacity[0] = 0;
 }
 
-// O(1)
-void Graph::insertY(unsigned int &v, unsigned int &cap) {
-  unsigned int cap_copy = static_cast<unsigned int>(cap);
-  unsigned int actual = static_cast<unsigned int>(0);
-  graph[1].adj.push_back(new Edge(&cap_copy, &actual, v + 1));
+void Graph::insertY(int &v, int cap) {
+  graph[v + 1].adj.push_back(&graph[1]);
+  graph[v + 1].capacity[1] = cap;
+  graph[1].capacity[v + 1] = 0;
 }
 
-bool Graph::bfs() {
-  for (unsigned int i = 0; i < size; i++) {
-    graph[i].rank = -1;
+int Graph::bfs() {
+  int previous_flow, result_flow;
+
+  for (int i = 0; i < size; i++) {
+    graph[i].parent = nullptr;
   }
 
-  queue<Vertex *> q;
-  q.push(&graph[0]);
-  graph[0].rank = 0;
+  queue<pair<Vertex *, int> > q;
+  q.push(make_pair(&graph[0], MAX_INT));
 
   while (!q.empty()) {
-    Vertex *v = q.front();
+    Vertex *v = q.front().first;
+    previous_flow = q.front().second;
+    q.pop();
 
-    for (vector<Edge *>::iterator it = v->adj.begin(); it != v->adj.end();
+    for (vector<Vertex *>::iterator it = v->adj.begin(); it != v->adj.end();
          ++it) {
-      Edge *e = *it;
+      Vertex *u = *it;
 
-      if (graph[e->dest].rank < 0 && *(e->actual) < *(e->capacity)) {
-        graph[e->dest].rank += 1;
-        q.push(&graph[e->dest]);
-      }
-    }
-  }
+      if (u->parent == nullptr && v->capacity[u->id] != 0) {
+        u->parent = v;
+        result_flow = min(previous_flow, v->capacity[u->id]);
 
-  return graph[1].rank >= 0;
-}
+        if (u->id == 1) return result_flow;
 
-int Graph::dfs(Vertex *v, int flow) {
-  if (v->id == 1) {
-    return flow;
-  }
-
-  for (; v->start < v->adj.size(); v->start++) {
-    Edge *e = v->adj[v->start];
-
-    if (*(e->capacity) <= *(e->actual)) {
-      continue;
-    }
-
-    if (v->heigth == graph[e->dest].heigth + 1) {
-      flow =
-          dfs(&graph[e->dest], min(flow, (int)(*(e->capacity) - *(e->actual))));
-
-      if (flow != 0) {
-        *(e->actual) += flow;
-        return flow;
+        q.push(make_pair(u, result_flow));
       }
     }
   }
@@ -138,13 +98,18 @@ int Graph::dfs(Vertex *v, int flow) {
 }
 
 void Graph::solve() {
-  while (bfs()) {
-    for (unsigned int i = 0; i < size; i++) {
-      graph[i].start = 0;
-    }
+  int flow;
+  Vertex *current, *previous;
 
-    while (int flow = dfs(&graph[0], INT_MAX)) {
-      result += flow;
+  while ((flow = bfs()) != 0) {
+    result += flow;
+    current = &graph[1];
+
+    while (current->id != 0) {
+      previous = current->parent;
+      previous->capacity[current->id] -= flow;
+      current->capacity[previous->id] += flow;
+      current = previous;
     }
   }
 
@@ -152,13 +117,13 @@ void Graph::solve() {
 }
 
 int main() {
-  unsigned int x, y, n, m;
+  int x, y, n, m;
 
   if (scanf("%d %d\n", &n, &m) == -1) return 1;
 
   Graph g(n + 2);
 
-  for (unsigned int i = 1; i <= n; i++) {
+  for (int i = 1; i <= n; i++) {
     if (scanf("%d %d\n", &x, &y) == -1) return 1;
     g.insertY(i, y);
     g.insertX(i, x);

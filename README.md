@@ -1,10 +1,3 @@
-# ASA project
+# ASA
 
 ## Projeto 2
-
-
-### Input
-
-
-### Solution
-
